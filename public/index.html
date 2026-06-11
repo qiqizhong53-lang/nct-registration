@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NCT 集训报名 · 选择校区</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+            background: #F5F7FA;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .card {
+            background: #fff;
+            border-radius: 20px;
+            padding: 48px 40px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+            text-align: center;
+            max-width: 420px;
+            width: 90%;
+        }
+        h1 { font-size: 22px; color: #1A1A2E; margin-bottom: 8px; }
+        p { color: #666; font-size: 14px; margin-bottom: 28px; }
+        .links { display: flex; flex-direction: column; gap: 14px; }
+        a {
+            display: block;
+            padding: 16px 24px;
+            border-radius: 14px;
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: 700;
+            color: #fff;
+            transition: transform 0.2s;
+        }
+        a:hover { transform: translateY(-2px); }
+        .chencunnct { background: linear-gradient(135deg, #FF6B35, #FFB347); }
+        .beijiaonct { background: linear-gradient(135deg, #4A6CF7, #6B8CFF); }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>🏫 选择校区</h1>
+        <p>请选择您所在的校区</p>
+        <div class="links">
+            <a class="chencunnct" href="/chencunnct/">陈村校区</a>
+            <a class="beijiaonct" href="/beijiaonct/">北滘校区</a>
+        </div>
+    </div>
+</body>
+</html>
