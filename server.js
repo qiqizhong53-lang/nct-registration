@@ -90,8 +90,8 @@ function setupCampus(routePrefix, campusName, dirName) {
 
 // ============ 注册校区 ============
 
-const chencunDB = setupCampus('/chencunnct', '陈村校区', 'chencun');
-const beijiaoDB = setupCampus('/beijiaonct', '北滘校区', 'beijiao');
+const chencunDB = setupCampus('/chencunnct', '陈村校区', 'chencunnct');
+const beijiaoDB = setupCampus('/beijiaonct', '北滘校区', 'beijiaonct');
 
 // 根路径跳转提示
 app.get('/', (req, res) => {
