@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>报名管理后台 | 陈村校区</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --orange: #FF6B35;
+            --orange-dark: #E85A24;
+            --blue: #4A6CF7;
+            --dark: #1A1A2E;
+            --text: #333;
+            --text-light: #666;
+            --bg: #F5F7FA;
+            --white: #fff;
+            --shadow: 0 4px 24px rgba(0,0,0,0.08);
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        /* ====== Header ====== */
+        .header {
+            background: linear-gradient(135deg, var(--dark) 0%, #2D2D5E 100%);
+            color: white;
+            padding: 24px;
+            text-align: center;
+        }
+        .header h1 { font-size: 22px; font-weight: 700; }
+        .header p { font-size: 13px; opacity: 0.6; margin-top: 4px; }
+
+        /* ====== Login ====== */
+        .login-section {
+            max-width: 400px;
+            margin: 60px auto;
+            background: var(--white);
+            border-radius: 20px;
+            padding: 40px 32px;
+            box-shadow: var(--shadow);
+            text-align: center;
+        }
+        .login-section h2 { font-size: 20px; color: var(--dark); margin-bottom: 8px; }
+        .login-section p { font-size: 14px; color: var(--text-light); margin-bottom: 24px; }
+        .login-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e8e8e8;
+            border-radius: 12px;
+            font-size: 16px;
+            outline: none;
+            transition: border-color 0.3s;
+            text-align: center;
+            box-sizing: border-box;
+        }
+        .login-input:focus { border-color: var(--orange); }
+        .login-btn {
+            width: 100%;
+            padding: 14px;
+            background: var(--orange);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 16px;
+            transition: background 0.2s;
+        }
+        .login-btn:hover { background: var(--orange-dark); }
+        .login-error {
+            color: #FF4444;
+            font-size: 13px;
+            margin-top: 10px;
+            display: none;
+        }
+
+        /* ====== Dashboard ====== */
+        .dashboard { display: none; }
+        .dashboard.active { display: block; }
+
+        /* Stats Bar */
+        .stats-bar {
+            display: flex;
+            gap: 16px;
+            padding: 24px;
+            max-width: 900px;
+            margin: 0 auto;
+            flex-wrap: wrap;
+        }
+        .stat-card {
+            flex: 1;
+            min-width: 140px;
+            background: var(--white);
+            border-radius: 14px;
+            padding: 20px;
+            box-shadow: var(--shadow);
+            text-align: center;
+        }
+        .stat-card .stat-num {
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--orange);
+        }
+        .stat-card .stat-label {
+            font-size: 13px;
+            color: var(--text-light);
+            margin-top: 4px;
+        }
+
+        /* Controls */
+        .controls {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .controls select, .controls input {
+            padding: 10px 14px;
+            border: 2px solid #e8e8e8;
+            border-radius: 10px;
+            font-size: 14px;
+            outline: none;
+            background: white;
+        }
+        .controls select:focus, .controls input:focus {
+            border-color: var(--orange);
+        }
+        .ctrl-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .ctrl-btn:hover { transform: scale(1.03); }
+        .ctrl-btn.orange { background: var(--orange); color: white; }
+        .ctrl-btn.blue { background: var(--blue); color: white; }
+        .ctrl-btn.outline { background: transparent; border: 2px solid #ddd; color: var(--text-light); }
+        .ctrl-btn.outline:hover { border-color: var(--orange); color: var(--orange); }
+        .ctrl-btn.danger { background: #FF4444; color: white; }
+        .spacer { flex: 1; }
+
+        /* Table */
+        .table-section {
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 0 24px 40px;
+        }
+        .table-wrap {
+            background: var(--white);
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th {
+            background: #f8f9fa;
+            padding: 14px 16px;
+            text-align: left;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-light);
+            border-bottom: 2px solid #eee;
+        }
+        td {
+            padding: 14px 16px;
+            font-size: 14px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        tr:last-child td { border-bottom: none; }
+        tr:hover td { background: #FAFAFA; }
+        .badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .badge-orange { background: #FFF0E8; color: var(--orange); }
+        .badge-blue { background: #EEF2FF; color: var(--blue); }
+        .del-btn {
+            background: none;
+            border: none;
+            color: #FF4444;
+            font-size: 13px;
+            cursor: pointer;
+            opacity: 0.6;
+            transition: opacity 0.2s;
+        }
+        .del-btn:hover { opacity: 1; }
+
+        /* Empty State */
+        .empty {
+            text-align: center;
+            padding: 48px 20px;
+            color: #bbb;
+        }
+        .empty-icon { font-size: 48px; margin-bottom: 12px; }
+        .empty p { font-size: 15px; }
+
+        /* Confirm Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.4);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-overlay.show { display: flex; }
+        .modal {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            width: 90%;
+            max-width: 360px;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+        }
+        .modal h3 { font-size: 18px; color: var(--dark); margin-bottom: 8px; }
+        .modal p { font-size: 14px; color: var(--text-light); margin-bottom: 20px; }
+        .modal-btns { display: flex; gap: 12px; }
+        .modal-btns button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .modal-btns .cancel-btn { background: #f0f0f0; color: var(--text-light); }
+        .modal-btns .confirm-btn { background: #FF4444; color: white; }
+
+        @media (max-width: 640px) {
+            .stats-bar { padding: 16px; gap: 10px; }
+            .stat-card { min-width: 100px; padding: 14px; }
+            .stat-card .stat-num { font-size: 24px; }
+            .controls { padding: 0 16px; }
+            .table-section { padding: 0 16px 24px; }
+            th, td { padding: 10px 12px; font-size: 13px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <div class="header">
+        <h1>📋 报名管理后台</h1>
+        <p>陈村校区 · NCT 集训报名数据管理</p>
+    </div>
+
+    <!-- Login -->
+    <div class="login-section" id="loginSection">
+        <h2>🔐 管理员登录</h2>
+        <p>请输入管理员密码查看报名数据</p>
+        <input class="login-input" type="password" id="adminPassword" placeholder="输入管理员密码" onkeydown="if(event.key==='Enter') doLogin()">
+        <button class="login-btn" onclick="doLogin()">登 录</button>
+        <div class="login-error" id="loginError">密码错误，请重试</div>
+    </div>
+
+    <!-- Dashboard -->
+    <div class="dashboard" id="dashboard">
+
+        <!-- Stats -->
+        <div class="stats-bar" id="statsBar">
+            <div class="stat-card">
+                <div class="stat-num" id="statTotal">0</div>
+                <div class="stat-label">总报名人数</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-num" id="statP1">0</div>
+                <div class="stat-label">第一期</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-num" id="statP2">0</div>
+                <div class="stat-label">第二期</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-num" id="statP3">0</div>
+                <div class="stat-label">第三期</div>
+            </div>
+        </div>
+
+        <!-- Controls -->
+        <div class="controls">
+            <select id="filterPeriod" onchange="loadData()">
+                <option value="">全部期数</option>
+                <option value="第一期">第一期</option>
+                <option value="第二期">第二期</option>
+                <option value="第三期">第三期</option>
+            </select>
+            <select id="filterTeacher" onchange="loadData()">
+                <option value="">全部老师</option>
+            </select>
+            <input type="text" id="filterName" placeholder="搜索姓名" oninput="loadData()">
+            <div class="spacer"></div>
+            <button class="ctrl-btn outline" onclick="loadData()">🔄 刷新</button>
+            <button class="ctrl-btn blue" onclick="exportCSV()">📥 导出 CSV</button>
+            <button class="ctrl-btn outline" onclick="doLogout()">退出登录</button>
+        </div>
+
+        <!-- Table -->
+        <div class="table-section">
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>序号</th>
+                            <th>姓名</th>
+                            <th>期数</th>
+                            <th>老师</th>
+                            <th>报名时间</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                    </tbody>
+                </table>
+                <div class="empty" id="emptyState" style="display:none">
+                    <div class="empty-icon">📭</div>
+                    <p>暂无报名记录</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirm Modal -->
+    <div class="modal-overlay" id="deleteModal">
+        <div class="modal">
+            <h3>确认删除</h3>
+            <p id="deleteMsg">确定要删除这条报名记录吗？此操作不可撤销。</p>
+            <div class="modal-btns">
+                <button class="cancel-btn" onclick="closeDeleteModal()">取消</button>
+                <button class="confirm-btn" onclick="confirmDelete()">确认删除</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var adminPwd = '';
+        var allData = [];
+        var deleteId = null;
+
+        function doLogin() {
+            adminPwd = document.getElementById('adminPassword').value;
+            if (!adminPwd) return;
+
+            fetch('api/stats?password=' + encodeURIComponent(adminPwd))
+                .then(function(r) { return r.json(); })
+                .then(function(data) {
+                    if (data.ok) {
+                        document.getElementById('loginSection').style.display = 'none';
+                        document.getElementById('dashboard').classList.add('active');
+                        updateStats(data.data);
+                        loadData();
+                    } else {
+                        document.getElementById('loginError').style.display = 'block';
+                    }
+                })
+                .catch(function() {
+                    document.getElementById('loginError').style.display = 'block';
+                });
+        }
+
+        function doLogout() {
+            adminPwd = '';
+            document.getElementById('loginSection').style.display = '';
+            document.getElementById('dashboard').classList.remove('active');
+            document.getElementById('adminPassword').value = '';
+            document.getElementById('loginError').style.display = 'none';
+        }
+
+        function updateStats(stats) {
+            document.getElementById('statTotal').textContent = stats.total || 0;
+            var periods = stats.byPeriod || {};
+            document.getElementById('statP1').textContent = periods['第一期：7月13日–7月25日'] || 0;
+            document.getElementById('statP2').textContent = periods['第二期：7月27日–8月8日'] || 0;
+            document.getElementById('statP3').textContent = periods['第三期：8月10日–8月22日'] || 0;
+        }
+
+        function loadData() {
+            fetch('api/registrations?password=' + encodeURIComponent(adminPwd))
+                .then(function(r) { return r.json(); })
+                .then(function(data) {
+                    if (!data.ok) return;
+                    allData = data.data;
+                    applyFilters();
+                    updateTeacherFilter(allData);
+                });
+        }
+
+        function updateTeacherFilter(records) {
+            var sel = document.getElementById('filterTeacher');
+            var current = sel.value;
+            var teachers = {};
+            records.forEach(function(r) { teachers[r.teacher] = true; });
+            sel.innerHTML = '<option value="">全部老师</option>';
+            Object.keys(teachers).sort().forEach(function(t) {
+                var opt = document.createElement('option');
+                opt.value = t;
+                opt.textContent = t;
+                if (t === current) opt.selected = true;
+                sel.appendChild(opt);
+            });
+        }
+
+        function applyFilters() {
+            var periodFilter = document.getElementById('filterPeriod').value;
+            var teacherFilter = document.getElementById('filterTeacher').value;
+            var nameFilter = document.getElementById('filterName').value.trim().toLowerCase();
+
+            var filtered = allData.filter(function(r) {
+                if (periodFilter && !r.period.includes(periodFilter)) return false;
+                if (teacherFilter && r.teacher !== teacherFilter) return false;
+                if (nameFilter && !r.name.toLowerCase().includes(nameFilter)) return false;
+                return true;
+            });
+
+            renderTable(filtered);
+        }
+
+        function renderTable(records) {
+            var tbody = document.getElementById('tableBody');
+            var empty = document.getElementById('emptyState');
+
+            if (records.length === 0) {
+                tbody.innerHTML = '';
+                empty.style.display = '';
+                return;
+            }
+
+            empty.style.display = 'none';
+            var html = '';
+            records.forEach(function(r, i) {
+                var badgeClass = r.period.includes('第二期') ? 'badge-blue' : 'badge-orange';
+                var periodShort = r.period;
+                html += '<tr>' +
+                    '<td>' + (i + 1) + '</td>' +
+                    '<td><strong>' + escHtml(r.name) + '</strong></td>' +
+                    '<td><span class="badge ' + badgeClass + '">' + escHtml(periodShort) + '</span></td>' +
+                    '<td>' + escHtml(r.teacher) + '</td>' +
+                    '<td>' + escHtml(r.createdAt || '-') + '</td>' +
+                    '<td><button class="del-btn" onclick="showDeleteModal(' + r.id + ', \'' + escHtml(r.name) + '\')">删除</button></td>' +
+                    '</tr>';
+            });
+            tbody.innerHTML = html;
+        }
+
+        function escHtml(str) {
+            var d = document.createElement('div');
+            d.textContent = str;
+            return d.innerHTML;
+        }
+
+        function showDeleteModal(id, name) {
+            deleteId = id;
+            document.getElementById('deleteMsg').textContent = '确定要删除「' + name + '」的报名记录吗？此操作不可撤销。';
+            document.getElementById('deleteModal').classList.add('show');
+        }
+
+        function closeDeleteModal() {
+            document.getElementById('deleteModal').classList.remove('show');
+            deleteId = null;
+        }
+
+        function confirmDelete() {
+            if (!deleteId) return;
+            fetch('api/registrations/' + deleteId + '?password=' + encodeURIComponent(adminPwd), {
+                method: 'DELETE'
+            })
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                closeDeleteModal();
+                if (data.ok) {
+                    loadData();
+                    fetch('api/stats?password=' + encodeURIComponent(adminPwd))
+                        .then(function(r) { return r.json(); })
+                        .then(function(s) { if (s.ok) updateStats(s.data); });
+                }
+            });
+        }
+
+        function exportCSV() {
+            var periodFilter = document.getElementById('filterPeriod').value;
+            var teacherFilter = document.getElementById('filterTeacher').value;
+            var nameFilter = document.getElementById('filterName').value.trim().toLowerCase();
+
+            var filtered = allData.filter(function(r) {
+                if (periodFilter && !r.period.includes(periodFilter)) return false;
+                if (teacherFilter && r.teacher !== teacherFilter) return false;
+                if (nameFilter && !r.name.toLowerCase().includes(nameFilter)) return false;
+                return true;
+            });
+
+            var csv = '﻿序号,姓名,期数,老师,报名时间\n';
+            filtered.forEach(function(r, i) {
+                csv += (i + 1) + ',' + r.name + ',' + r.period + ',' + r.teacher + ',' + (r.createdAt || '') + '\n';
+            });
+
+            var blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            var url = URL.createObjectURL(blob);
+            var a = document.createElement('a');
+            a.href = url;
+            a.download = '陈村校区_报名数据_' + new Date().toISOString().slice(0, 10) + '.csv';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        document.getElementById('deleteModal').addEventListener('click', function(e) {
+            if (e.target === this) closeDeleteModal();
+        });
+    </script>
+</body>
+</html>
