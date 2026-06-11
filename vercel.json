@@ -1,4 +1,7 @@
 {
+  "framework": null,
+  "buildCommand": null,
+  "outputDirectory": "public",
   "rewrites": [
     { "source": "/chencunnct/api/:path*", "destination": "/api/chencunnct/:path*" },
     { "source": "/beijiaonct/api/:path*", "destination": "/api/beijiaonct/:path*" }
